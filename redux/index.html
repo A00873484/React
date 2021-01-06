@@ -158,12 +158,31 @@
                 }))
             }
 
+            function toggleTodo(id){
+                store.dispatch(toggleTodoAction(id))
+            }
+
             document.getElementById('todoBtn').addEventListener('click', addTodo)
             document.getElementById('goalBtn').addEventListener('click', addGoal)
 
             function addTodoToDOM(todo){
                 const node = document.createElement('li')
+
+                let checkbox = document.createElement('input'); 
+                checkbox.type = "checkbox"; 
+                checkbox.name = `checkbox_${todo.name}`; 
+                checkbox.value = todo.complete; 
+                checkbox.id = `todo_${todo.id}`; 
+                checkbox.onclick = ()=>toggleTodo(todo.id)
+
+                if(todo.complete){
+                    node.style = 'text-decoration: line-through;'
+                    checkbox.checked = true
+                }
+
                 const text = document.createTextNode(todo.name)
+
+                node.appendChild(checkbox)
                 node.appendChild(text)
                 document.getElementById('todos').appendChild(node)
             }
