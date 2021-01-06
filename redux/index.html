@@ -150,7 +150,7 @@
             function addGoal(){
                 const input = document.getElementById('goal')
                 const name = input.value
-                input.val = ''
+                input.value = ''
 
                 store.dispatch(addGoalAction({
                     name,
@@ -160,52 +160,44 @@
 
             document.getElementById('todoBtn').addEventListener('click', addTodo)
             document.getElementById('goalBtn').addEventListener('click', addGoal)
+            
+            function createRemoveButton(onClick) {
+                const button = document.createElement('button')
+                button.innerHTML = 'X'
+                button.addEventListener('click', onClick)
+                return button
+            }
 
             function addTodoToDOM(todo){
                 const node = document.createElement('li')
+                const text = document.createTextNode(todo.name)
+
+                const button = createRemoveButton(()=>{
+                    store.dispatch(removeTodoAction(todo.id))
+                })
+
+                node.appendChild(text)
+                node.appendChild(button)
                 node.style.textDecoration = todo.complete?'line-through':'none'
                 node.addEventListener('click', () => {
                     store.dispatch(toggleTodoAction(todo.id))
                 })
-
-                const text = document.createTextNode(todo.name)
-                node.appendChild(text)
+                
                 document.getElementById('todos').appendChild(node)
             }
 
             function addGoalToDOM(goal){
                 const node = document.createElement('li')
                 const text = document.createTextNode(goal.name)
+
+                const button = createRemoveButton(()=>{
+                    store.dispatch(removeGoalAction(goal.id))
+                })
+
                 node.appendChild(text)
+                node.appendChild(button)
                 document.getElementById('goals').appendChild(node)
             }
-            // store.dispatch(addTodoAction({
-            //     id: 1,
-            //     name: 'Wash the car',
-            //     complete: false,
-            // }))
-            
-            // store.dispatch(addTodoAction({
-            //     id: 2,
-            //     name: 'Go to the gym',
-            //     complete: true,
-            // }))
-            
-            // store.dispatch(removeTodoAction(1))
-
-            // store.dispatch(toggleTodoAction(0))
-            
-            // store.dispatch(addGoalAction({
-            //     id: 0,
-            //     name: 'Learn Redux'
-            // }))
-            
-            // store.dispatch(addGoalAction({
-            //     id: 1,
-            //     name: 'Lose 20 pounds'
-            // }))
-            
-            // store.dispatch(removeGoalAction(0))
         </script>
     </body>
 </html>
