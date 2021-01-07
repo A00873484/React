@@ -2,6 +2,7 @@
 <html>
     <head>
         <title>Udacity Todos Goals</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js"></script>
     </head>
     <body>
         <div>
@@ -19,35 +20,6 @@
         <script type="text/javascript">
             function generateId(){
                 return Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36)
-            }
-
-            //Library Code
-            function createStore(reducer){
-                let state
-                let listeners = []
-
-                const getState = () => state
-
-                const subscribe = (listener) => {
-                    listeners.push(listener)
-                    return () => {
-                        listeners = listeners.filter((l) => l !== listener)
-                    }
-                }
-
-                const dispatch = (action) => {
-                    let res = reducer(state, action)
-                    if(res != state){  
-                        state = res
-                        listeners.forEach((l)=>l())
-                    }
-                }
-
-                return {
-                    getState,
-                    subscribe,
-                    dispatch
-                }
             }
 
             //App Code
@@ -114,14 +86,37 @@
                 }
             }
 
-            function root (state = {}, action){
-                return state = {
-                    toDos: toDos(state.toDos, action),
-                    goals: goals(state.goals, action)
+            const checker = (store) => (next) => (action) => {
+                if (
+                    action.type === ADD_TODO &&
+                    action.todo.name.toLowerCase().includes('bitcoin')
+                ) {
+                    return alert("Nope. That's a bad idea.")
                 }
+
+                if (
+                    action.type === ADD_GOAL &&
+                    action.goal.name.toLowerCase().includes('bitcoin')
+                ) {
+                    return alert("Nope. That's a bad idea.")
+                }
+
+                return next(action)
             }
 
-            const store = createStore(root)
+            const logger = (store) => (next) => (action) => {
+                console.group(action.type)
+                    console.log('The action: ', action)
+                    const result = next(action)
+                    console.log('The new state; ', store.getState())
+                console.groupEnd()
+                return result
+            }
+            
+            const store = Redux.createStore(Redux.combineReducers({
+                toDos,
+                goals,
+            }), Redux.applyMiddleware(checker, logger))
             
             store.subscribe(() => {
                 const { goals, toDos } = store.getState()
