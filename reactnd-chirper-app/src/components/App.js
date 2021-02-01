@@ -14,6 +14,7 @@ class App extends Component {
   }
 
   render() {
+    console.log(this.props.loading)
     return (
       <Router>
         <Fragment>
